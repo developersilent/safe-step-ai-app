@@ -1,5 +1,5 @@
-import React, { useRef, useEffect } from 'react';
-import { Animated, Pressable, StyleSheet } from 'react-native';
+import React, { useEffect, useRef } from "react";
+import { Animated, Pressable, StyleSheet } from "react-native";
 
 const SWITCH_WIDTH = 40;
 const SWITCH_HEIGHT = 22;
@@ -33,16 +33,13 @@ const Switcher1 = ({ value, onValueChange }: Switcher1Props) => {
 
   const backgroundColor = anim.interpolate({
     inputRange: [0, 1],
-    outputRange: ['#3f3f3f', '#6366F1'],
+    outputRange: ["#3f3f3f", "#6366F1"],
   });
 
   return (
     <Pressable onPress={toggleSwitch} style={styles.label}>
       <Animated.View style={[styles.switch, { backgroundColor }]}>
-        <Animated.View style={[
-          styles.dot,
-          { transform: [{ translateX }] }
-        ]} />
+        <Animated.View style={[styles.dot, { transform: [{ translateX }] }]} />
       </Animated.View>
     </Pressable>
   );
@@ -50,23 +47,23 @@ const Switcher1 = ({ value, onValueChange }: Switcher1Props) => {
 
 const styles = StyleSheet.create({
   label: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   switch: {
     width: SWITCH_WIDTH,
     height: SWITCH_HEIGHT,
     borderRadius: SWITCH_HEIGHT / 2,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   dot: {
-    position: 'absolute',
+    position: "absolute",
     top: DOT_MARGIN,
     left: DOT_MARGIN,
     width: DOT_SIZE,
     height: DOT_SIZE,
     borderRadius: DOT_SIZE / 2,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     elevation: 2,
   },
 });
