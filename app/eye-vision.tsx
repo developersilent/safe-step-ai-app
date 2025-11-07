@@ -6,21 +6,54 @@ import {
 import MonitorEye from "@expo/vector-icons/MaterialCommunityIcons";
 
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import { Camera, useCameraDevice } from "react-native-vision-camera";
+import {
+  Camera,
+  runAtTargetFps,
+  useCameraDevice,
+  useCameraPermission,
+  useFrameProcessor,
+} from "react-native-vision-camera";
+import { useResizePlugin } from "vision-camera-resize-plugin";
 
 export default function EyeVision() {
+  const { resize } = useResizePlugin();
   const [cameraMode, setCameraMode] = useState(false);
   const router = useRouter();
+  const { requestPermission, hasPermission } = useCameraPermission();
+
   const handleMorePress = () => {
     router.push("/setting");
   };
+
   const device = useCameraDevice("back");
-  const handleScanPress = () => {
+
+  const handleScanPress = async () => {
     if (!device) return;
     setCameraMode((prev) => !prev);
   };
+
+  useEffect(() => {
+    if (hasPermission === false) {
+      requestPermission();
+    }
+  }, [hasPermission, requestPermission]);
+
+  const frameProcesser = useFrameProcessor((frame) => {
+    "worklet";
+    runAtTargetFps(15, () => {
+      "worklet";
+      const resizedFrame = resize(frame, {
+        scale: { width: 224, height: 224 },
+        pixelFormat: "rgb",
+        dataType: "uint8",
+      });
+      const len = resizedFrame;
+      console.log(`resized length: ${len}`);
+    });
+  }, []);
+
   return (
     <View className="w-full h-full bg-dark flex gap-3 p-5">
       {/* Header */}
@@ -43,11 +76,11 @@ export default function EyeVision() {
             style={{
               width: "100%",
               height: "100%",
-              transitionProperty: "all",
-              transitionDuration: "500ms",
-              transitionTimingFunction: "ease-in-out",
             }}
+            pixelFormat="rgb"
+            frameProcessor={frameProcesser}
             device={device}
+            enableFpsGraph={true}
             isActive={cameraMode}
           />
         </View>
